@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 17)
 
 project(GraphGenerator)
 
-set(CMAKE_CXX_STANDARD 11)
 
-include_directories(include)
-add_executable(GraphGenerator main.cpp)
+
+file(GLOB_RECURSE SRC_FILES stc/*.cpp)
+add_executable(GraphGenerator main.cpp ${SRC_FILES})
+target_include_directories(GraphGenerator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
