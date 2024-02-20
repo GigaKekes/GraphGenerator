@@ -2,19 +2,18 @@
 #define GRGEN_INCL_GRAPH 
 
 #include <vector>
+
 #include "dataStructures.h"
 
 class Graph
 {
-  std::vector<Edge> edges;
-  std::vector<Vertex> vertexes;
+private:
+  std::vector<edge> edges;
+  std::vector<vertex> vertexes;
   int numOfVertexes;
   int idealSpread;
-
-  Graph(std::vector<Edge> edges, int numOfVertexes, int idealSpread) : edges(edges), numOfVertexes(numOfVertexes), idealSpread(idealSpread) :
-  {
-
-  };
+public:
+  Graph(std::vector<edge> edges, int numOfVertexes, int idealSpread); 
   
 };
 

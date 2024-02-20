@@ -6,6 +6,7 @@
 #include <string>
 
 #include "include/dataStructures.h"
+//#include <Graph.h>
 
 using namespace std;
 
@@ -20,13 +21,13 @@ int main()
       return 1;
   }
     
-  int numVertices, numEdges;
-  inputFile >> numVertices >> numEdges;
+  int numVertexes, numEdges;
+  inputFile >> numVertexes >> numEdges;
 
-  vector<Edge> edges;
+  vector<edge> edges;
   for (int i = 0; i < numEdges; ++i) 
   {
-      Edge edge;
+      edge edge;
       inputFile >> edge.u >> edge.v;
       edge.u--;
       edge.v--;    
@@ -35,5 +36,7 @@ int main()
   
   inputFile.close();
 
+
+  //Graph graph(edges, numVertexes, 2000); 
   return 0;
 }
