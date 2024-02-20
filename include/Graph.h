@@ -7,13 +7,14 @@
 
 class Graph
 {
-private:
+protected:
   std::vector<edge> edges;
   std::vector<vertex> vertexes;
   int numOfVertexes;
-  int idealSpread;
+  int idealSize;
 public:
-  Graph(std::vector<edge> edges, int numOfVertexes, int idealSpread); 
+  Graph(std::vector<edge> edges, int numOfVertexes, int idealSize);
+  Graph();
   
 };
 

@@ -5,8 +5,8 @@
 #include <cstdlib>
 #include <string>
 
-#include "include/dataStructures.h"
-//#include <Graph.h>
+#include <dataStructures.h>
+#include <Graph.h>
 
 using namespace std;
 
@@ -37,6 +37,6 @@ int main()
   inputFile.close();
 
 
-  //Graph graph(edges, numVertexes, 2000); 
+  Graph graph(edges, numVertexes, 2000); 
   return 0;
 }
