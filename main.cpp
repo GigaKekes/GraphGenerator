@@ -6,14 +6,14 @@
 #include <string>
 
 #include <dataStructures.h>
-#include <Graph.h>
+#include <ForceDirectedGraph.h>
 
 using namespace std;
 
 
 int main() 
 {
-  ifstream inputFile("/home/dmitry/Programs/Projects/Assignment/GraphGenerator/test2.txt");
+  ifstream inputFile("/home/dmitry/Programs/Projects/Assignment/GraphGenerator/test.txt");
   
   if (!inputFile.is_open())
   {
@@ -24,10 +24,10 @@ int main()
   int numVertexes, numEdges;
   inputFile >> numVertexes >> numEdges;
 
-  vector<edge> edges;
+  vector<Edge> edges;
   for (int i = 0; i < numEdges; ++i) 
   {
-      edge edge;
+      Edge edge;
       inputFile >> edge.u >> edge.v;
       edge.u--;
       edge.v--;    
@@ -37,6 +37,8 @@ int main()
   inputFile.close();
 
 
-  Graph graph(edges, numVertexes, 2000); 
+  ForceDirectedGraph graph(edges, numVertexes, 2000);
+  graph.fruchtermanReingold();
+  graph.printLayout();
   return 0;
 }
