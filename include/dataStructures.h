@@ -6,14 +6,14 @@ typedef struct Vertex
   double x, y;
   Vertex(double x, double y) : x(x), y(y){}
   Vertex() {}
-} vertex;
+} Vertex;
 
 typedef struct Edge
 {
   int u, v;
   Edge(int u, int v) : u(u), v(v){}
   Edge() {} 
-} edge;
+} Edge;
 
 #endif // GRGEN_INCL_GRAPH 
 

@@ -8,14 +8,14 @@
 class Graph
 {
 protected:
-  std::vector<edge> edges;
-  std::vector<vertex> vertexes;
+  std::vector<Edge> edges;
+  std::vector<Vertex> vertexes;
   int numOfVertexes;
   int idealSize;
 public:
-  Graph(std::vector<edge> edges, int numOfVertexes, int idealSize);
+  Graph(std::vector<Edge> edges, int numOfVertexes, int idealSize);
   Graph();
-  
+
 };
 
 #endif // GRGEN_INCL_GRAPH 
