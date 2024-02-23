@@ -6,17 +6,17 @@
 class ForceDirectedGraph : Graph{
 
 private:
-  const double kCooling = 0.95;
+  const double kCooling = 0.85;
   double k; // Constant for force calculation
   double temperature; // Temperature for the simulation
+  std::vector<Edge> edges;
 public:
   ForceDirectedGraph(std::vector<Edge> edges, int numOfVertexes, int idealSize);
-  void fruchtermanReingold();
+  void fruchtermanReingold(int iterations);
   void printLayout();
-
   std::vector<Vertex> getVertexes();
 private:
-  std::vector<Vertex> FRComputeAttractiveForces();
-  std::vector<Vertex> FRComputeRepulsiveForces();
-  void Update(const std::vector<Vertex>& attractiveForces, const std::vector<Vertex>& repulsiveForces);
+  void inshape();
+
+private:
 };

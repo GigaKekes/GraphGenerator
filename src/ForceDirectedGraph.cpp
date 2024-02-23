@@ -1,8 +1,13 @@
 #include <ForceDirectedGraph.h>
+#include <GraphVisualizer.h>
 
+#include <algorithm>
 #include <cmath>
 #include <ctime>
+#include <cwchar>
 #include <iostream>
+#include <iterator>
+#include <string>
 #include <vector>
 
 #include <dataStructures.h>
@@ -11,9 +16,10 @@
 ForceDirectedGraph::ForceDirectedGraph(std::vector<Edge> edges, int numOfVertexes, int idealSize) 
 {
   k = sqrt((double)(idealSize*idealSize) / numOfVertexes);
-  temperature = idealSize / 10.0;
+  temperature = 10.0 * sqrt(vertexes.size());
   this->idealSize = idealSize;
   this->numOfVertexes = numOfVertexes;
+  this->edges = edges;
 
   srand(time(NULL));
   for (int i = 0; i < numOfVertexes; ++i) 
@@ -25,37 +31,80 @@ ForceDirectedGraph::ForceDirectedGraph(std::vector<Edge> edges, int numOfVertexe
   } 
 }
 
-void ForceDirectedGraph::fruchtermanReingold()
+void ForceDirectedGraph::fruchtermanReingold(int iterations)
 {
-  int iterations = 1000;
-
-  for(int i = 0; i < iterations; ++i) 
+  for(int i = 0; i < iterations; i++)
   {
-    // Compute attractive and repulsive attractiveForces
-    std::cout << "\nCalc " << i << " attractive forces" << std::endl;
+    // Zeroing force
+    Vertex space = {0.0, 0.0};
+    std::vector<Vertex> forces(vertexes.size());
+    fill(forces.begin(), forces.end(), space);
 
-    std::vector<Vertex> attractiveForces = FRComputeAttractiveForces();
+    // Computing repulcive forces
+    for(size_t i = 0; i < vertexes.size(); i++) 
+    {
+      for(size_t j = i+1; j < vertexes.size(); j++)
+      {
+        if(i==j) continue;
+
+        double dx = vertexes[i].x - vertexes[j].x;
+        double dy = vertexes[i].y - vertexes[j].y;
+        double distance = sqrt(dx * dx + dy * dy);
+
+        double repulsion = k*k / distance;
+
+        forces[i].x += repulsion * dx / distance;
+        forces[i].y += repulsion * dy / distance;
+        forces[j].x -= repulsion * dx / distance;
+        forces[j].y -= repulsion * dy / distance;
+      } 
+    }
+    // Computing attractiive forces
+    for(auto edge : edges)
+    {
+      double dx = vertexes[edge.u].x - vertexes[edge.v].x;
+      double dy = vertexes[edge.u].y - vertexes[edge.v].y;
+      double distance = sqrt(dx * dx + dy * dy);
+
+      double attraction = distance*distance / k;
+
+      forces[edge.u].x -= attraction * dx / distance;
+      forces[edge.u].y -= attraction * dy / distance;
+      forces[edge.v].x += attraction * dx / distance;
+      forces[edge.v].y += attraction * dy / distance;  
+    }
 
 
-    std::cout << "\nCalc " << i << " repulcive forces" << std::endl;
+    // Applying forces on vertexes
+    for (size_t i = 0; i < vertexes.size(); i++) 
+    {
+      double force_norm = sqrt(forces[i].x * forces[i].x + forces[i].y * forces[i].y);
+      double scale = std::min(force_norm, temperature);
 
-    std::vector<Vertex> repulsiveForces = FRComputeRepulsiveForces();
+      double movement_x = forces[i].x / force_norm * scale;
+      double movement_y = forces[i].y / force_norm * scale;
 
-    std::cout << "\nUpdating Positions" << std::endl;
+      vertexes[i].x += movement_x;
+      vertexes[i].y += movement_y;
+      
+      vertexes[i].x = fmin((double)idealSize, fmax(0.0, vertexes[i].x));
+      vertexes[i].y = fmin((double)idealSize, fmax(0.0, vertexes[i].y));
+    }
 
-    // Update vertex positions based on attractiveForces
-    Update(attractiveForces, repulsiveForces);
+    // Cooling down
+    temperature = std::max(1.5, temperature*kCooling);
+    
 
-    std::cout <<'\n'<< i << " succsesful" << std::endl;
-
-    // Decrease the temperature to simulate cooling
-    temperature *= kCooling;
+    if(i%50 == 0)
+    {
+      //inshape();
+      GraphVisualizer graphVisualizer(vertexes, edges, 2000, 2000);
+      graphVisualizer.visualize("img/Graph_Visualization" + std::to_string(i) + ".bmp");
+    }
 
   }
+
 }
-
-
-
 
 void ForceDirectedGraph::printLayout() 
 {
@@ -70,107 +119,36 @@ std::vector<Vertex> ForceDirectedGraph::getVertexes()
   return vertexes;
 }
 
-std::vector<Vertex> ForceDirectedGraph::FRComputeAttractiveForces() 
+void ForceDirectedGraph::inshape()
 {
-  std::vector<Vertex> forces;
-  for (size_t i = 0; i < vertexes.size(); i++) {
-    forces.push_back(Vertex(0.0, 0.0));
-  }
-
-  for (auto edge : edges) {
-    double dx = vertexes[edge.v].x - vertexes[edge.u].x;
-    double dy = vertexes[edge.v].y - vertexes[edge.u].y;
-    double distance = sqrt(dx * dx + dy * dy);
-    double force = distance * distance / k;
-
-
-
-    forces[edge.u].x += force * dx / distance;
-    forces[edge.u].y += force * dy / distance;
-    forces[edge.v].x -= force * dx / distance;
-    forces[edge.v].y -= force * dy / distance;
-
-  }
-
-  for (size_t i = 0; i < vertexes.size(); i++) {
-    if(std::isnan(forces[i].x)) forces[i].x = 0;
-    if(std::isnan(forces[i].y)) forces[i].y = 0;
-  }
-
-  for (size_t i = 0; i < vertexes.size(); i++) {
-    std::cout << forces[i].x << " " << forces[i].y << std::endl;
-  }
-  return forces;  
-}
-
-std::vector<Vertex> ForceDirectedGraph::FRComputeRepulsiveForces() 
-{
-
-  std::vector<Vertex> repulsiveForces;
-  for (size_t i = 0; i < vertexes.size(); i++) {
-    repulsiveForces.push_back(Vertex(0.0, 0.0));
-  }
-
-  for (int i = 0; i < vertexes.size(); ++i) {
-    for (int j = 0; j < vertexes.size(); ++j) {
-      if (i != j) {
-        double dx = vertexes[j].x - vertexes[i].x;
-        double dy = vertexes[j].y - vertexes[i].y;
-        double distance = sqrt(dx * dx + dy * dy);
-        double force = k * k / distance;
-
-        repulsiveForces[i].x -= force * dx / distance;
-        repulsiveForces[i].y -= force * dy / distance;
-      }
-    }
-  }
-
-  for (size_t i = 0; i < vertexes.size(); i++) {
-    if(std::isnan(repulsiveForces[i].x)) repulsiveForces[i].x = 0;
-    if(std::isnan(repulsiveForces[i].y)) repulsiveForces[i].y = 0;
-  } 
-  for (size_t i = 0; i < vertexes.size(); i++) {
-    std::cout << repulsiveForces[i].x << " " << repulsiveForces[i].y << std::endl;
-  }
-
-
-  return repulsiveForces;
-}
-
-void ForceDirectedGraph::Update(const std::vector<Vertex>& attractiveForces, const std::vector<Vertex>& repulsiveForces) 
-{
-  int maxDistortion = 0;
-  int maxNegDiviation = 0;
-
-  for (int i = 0; i < vertexes.size(); ++i) {
-    double displacement = sqrt(attractiveForces[i].x * attractiveForces[i].x + attractiveForces[i].y * attractiveForces[i].y)
-      / sqrt(repulsiveForces[i].x * repulsiveForces[i].x + repulsiveForces[i].y * repulsiveForces[i].y);
-
-    displacement = std::min(displacement, temperature);
-
-    // Update vertex positions with bounds checking
-    vertexes[i].x = vertexes[i].x + (attractiveForces[i].x + repulsiveForces[i].x) * displacement;
-    vertexes[i].y = vertexes[i].y + (attractiveForces[i].y + repulsiveForces[i].y) * displacement;
-    std::cout << vertexes[i].x << ' ' << vertexes[i].y << std::endl;
-
-    if(vertexes[i].x > idealSize || vertexes[i].y > idealSize) maxDistortion = fmax(maxDistortion, fmax(vertexes[i].x, vertexes[i].y));
-    if(vertexes[i].x < 0 || vertexes[i].y < 0) maxNegDiviation = abs(fmin(maxNegDiviation, fmin(vertexes[i].x, vertexes[i].y)));
-  }
-  if(maxNegDiviation != 0)
+  double maxNegDiv = 0;
+  double maxDiv = idealSize;
+  for(int j = 0; j < vertexes.size(); j++)
   {
-    for(int i = 0; i < vertexes.size(); ++i)
-    {
-      vertexes[i].x += maxNegDiviation;
-      vertexes[i].y += maxNegDiviation;
-    }
-    maxDistortion += maxNegDiviation;
+    if(vertexes[j].x < 0 && abs(vertexes[j].x) > maxNegDiv) maxNegDiv = abs(vertexes[j].x);
+    if(vertexes[j].y < 0 && abs(vertexes[j].y) > maxNegDiv) maxNegDiv = abs(vertexes[j].y);
+
+    maxDiv = std::max(maxDiv, std::max(vertexes[j].x, vertexes[j].y));
+
+    if (maxNegDiv == 0 && maxDiv == idealSize) return;
   }
-  if(maxDistortion != 0)
+
+  if(maxNegDiv > 0)
   {
-    for(int i = 0; i < vertexes.size(); ++i)
+    for(int j = 0; j < vertexes.size(); ++j)
     {
-      vertexes[i].x = vertexes[i].x  * idealSize / (maxDistortion*1.05);
-      vertexes[i].y = vertexes[i].y  * idealSize / (maxDistortion*1.05);
+      vertexes[j].x += maxNegDiv + 100;
+      vertexes[j].y += maxNegDiv + 100;
+    }
+    maxDiv += maxNegDiv + 100;
+  }
+
+  if(maxDiv > idealSize)
+  {
+    for(int j = 0; j < vertexes.size(); ++j)
+    {
+      vertexes[j].x = vertexes[j].x  * idealSize / (maxDiv*1.05);
+      vertexes[j].y = vertexes[j].y  * idealSize / (maxDiv*1.05);
     }
   }
 }

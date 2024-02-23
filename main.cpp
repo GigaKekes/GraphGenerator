@@ -14,7 +14,7 @@ using namespace std;
 
 int main() 
 {
-  ifstream inputFile("/home/dmitry/Programs/Projects/Assignment/GraphGenerator/test.txt");
+  ifstream inputFile("/home/dmitry/Programs/Projects/Assignment/GraphGenerator/tests/test3.txt");
 
   if (!inputFile.is_open())
   {
@@ -30,15 +30,12 @@ int main()
   {
     Edge edge;
     inputFile >> edge.u >> edge.v;
-    edge.u--;
-    edge.v--;    
     edges.push_back(edge);
   }
-
   inputFile.close();
 
   ForceDirectedGraph graph(edges, numVertexes, 2000);
-  graph.fruchtermanReingold();
+  graph.fruchtermanReingold(2000);
   graph.printLayout();
 
   GraphVisualizer graphVisualizer(graph.getVertexes(), edges, 2000, 2000);
