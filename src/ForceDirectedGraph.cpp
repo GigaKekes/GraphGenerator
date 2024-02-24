@@ -1,6 +1,7 @@
 #include <ForceDirectedGraph.h>
 #include <GraphVisualizer.h>
 
+#include <cmath>
 #include <ctime>
 #include <cwchar>
 
@@ -60,7 +61,7 @@ void ForceDirectedGraph::fruchtermanReingold(int iterations)
       double distance = sqrt(dx * dx + dy * dy);
 
       double attraction = distance*distance / k;
-
+      
       forces[edge.u].x -= attraction * dx / distance;
       forces[edge.u].y -= attraction * dy / distance;
       forces[edge.v].x += attraction * dx / distance;
@@ -73,7 +74,9 @@ void ForceDirectedGraph::fruchtermanReingold(int iterations)
     {
       double force_norm = sqrt(forces[i].x * forces[i].x + forces[i].y * forces[i].y);
       double scale = std::min(force_norm, temperature);
-
+      
+      if(std::isnan(forces[i].x) || std::isnan(forces[i].y))
+        continue;
       double movement_x = forces[i].x / force_norm * scale;
       double movement_y = forces[i].y / force_norm * scale;
 
@@ -83,15 +86,11 @@ void ForceDirectedGraph::fruchtermanReingold(int iterations)
 
     // Cooling down
     temperature = std::max(1.5, temperature*kCooling);
-
-    /*
-    if(i % (iterations / 100) == 0)
+    if(i < 2)
     {
-      GraphVisualizer graphVisualizer(vertexes, edges, 2000, 2000);
-      graphVisualizer.visualize("img/Graph_Visualization" + std::to_string(i) + ".bmp");
+      std::cout << i;
+    printLayout();    
     }
-    */
-
   }
   inshape();
 
@@ -120,8 +119,6 @@ void ForceDirectedGraph::inshape()
     if(vertexes[j].y < 0.0 && abs(vertexes[j].y) > maxNegDiv) maxNegDiv = abs(vertexes[j].y);
 
     maxDiv = std::max(maxDiv, std::max(vertexes[j].x, vertexes[j].y));
-
-    if (maxNegDiv == 0 && maxDiv == idealSize) continue;
   }
 
 

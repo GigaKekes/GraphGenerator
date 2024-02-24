@@ -12,9 +12,9 @@
 using namespace std;
 
 
-int main() 
+int main(int argc, char* argv[]) 
 {
-  ifstream inputFile("/home/dmitry/Programs/Projects/Assignment/GraphGenerator/tests/test3.txt");
+  ifstream inputFile(argv[1]);
 
   if (!inputFile.is_open())
   {
@@ -38,7 +38,7 @@ int main()
   int idealSize = 2000;
 
   ForceDirectedGraph graph(edges, numVertexes, idealSize);
-  graph.fruchtermanReingold(5000);
+  graph.fruchtermanReingold(1000);
   graph.printLayout();
 
   GraphVisualizer graphVisualizer(graph.getVertexes(), edges, idealSize, idealSize);
