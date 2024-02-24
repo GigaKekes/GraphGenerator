@@ -33,12 +33,15 @@ int main()
     edges.push_back(edge);
   }
   inputFile.close();
+  
 
-  ForceDirectedGraph graph(edges, numVertexes, 2000);
-  graph.fruchtermanReingold(2000);
+  int idealSize = 2000;
+
+  ForceDirectedGraph graph(edges, numVertexes, idealSize);
+  graph.fruchtermanReingold(5000);
   graph.printLayout();
 
-  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, 2000, 2000);
+  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, idealSize, idealSize);
   graphVisualizer.visualize("Graph_Visualization.bmp");
   return 0;
 }

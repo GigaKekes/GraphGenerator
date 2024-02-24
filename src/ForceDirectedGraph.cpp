@@ -1,17 +1,10 @@
 #include <ForceDirectedGraph.h>
 #include <GraphVisualizer.h>
 
-#include <algorithm>
-#include <cmath>
 #include <ctime>
 #include <cwchar>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <vector>
 
 #include <dataStructures.h>
-
 
 ForceDirectedGraph::ForceDirectedGraph(std::vector<Edge> edges, int numOfVertexes, int idealSize) 
 {
@@ -86,23 +79,21 @@ void ForceDirectedGraph::fruchtermanReingold(int iterations)
 
       vertexes[i].x += movement_x;
       vertexes[i].y += movement_y;
-      
-      vertexes[i].x = fmin((double)idealSize, fmax(0.0, vertexes[i].x));
-      vertexes[i].y = fmin((double)idealSize, fmax(0.0, vertexes[i].y));
     }
 
     // Cooling down
     temperature = std::max(1.5, temperature*kCooling);
-    
 
-    if(i%50 == 0)
+    /*
+    if(i % (iterations / 100) == 0)
     {
-      //inshape();
       GraphVisualizer graphVisualizer(vertexes, edges, 2000, 2000);
       graphVisualizer.visualize("img/Graph_Visualization" + std::to_string(i) + ".bmp");
     }
+    */
 
   }
+  inshape();
 
 }
 
@@ -121,34 +112,29 @@ std::vector<Vertex> ForceDirectedGraph::getVertexes()
 
 void ForceDirectedGraph::inshape()
 {
-  double maxNegDiv = 0;
+  double maxNegDiv = 0.0;
   double maxDiv = idealSize;
   for(int j = 0; j < vertexes.size(); j++)
   {
-    if(vertexes[j].x < 0 && abs(vertexes[j].x) > maxNegDiv) maxNegDiv = abs(vertexes[j].x);
-    if(vertexes[j].y < 0 && abs(vertexes[j].y) > maxNegDiv) maxNegDiv = abs(vertexes[j].y);
+    if(vertexes[j].x < 0.0 && abs(vertexes[j].x) > maxNegDiv) maxNegDiv = abs(vertexes[j].x);
+    if(vertexes[j].y < 0.0 && abs(vertexes[j].y) > maxNegDiv) maxNegDiv = abs(vertexes[j].y);
 
     maxDiv = std::max(maxDiv, std::max(vertexes[j].x, vertexes[j].y));
 
-    if (maxNegDiv == 0 && maxDiv == idealSize) return;
+    if (maxNegDiv == 0 && maxDiv == idealSize) continue;
   }
 
-  if(maxNegDiv > 0)
-  {
-    for(int j = 0; j < vertexes.size(); ++j)
-    {
-      vertexes[j].x += maxNegDiv + 100;
-      vertexes[j].y += maxNegDiv + 100;
-    }
-    maxDiv += maxNegDiv + 100;
-  }
 
-  if(maxDiv > idealSize)
+  for(int j = 0; j < vertexes.size(); j++)
   {
-    for(int j = 0; j < vertexes.size(); ++j)
-    {
-      vertexes[j].x = vertexes[j].x  * idealSize / (maxDiv*1.05);
-      vertexes[j].y = vertexes[j].y  * idealSize / (maxDiv*1.05);
-    }
+    vertexes[j].x += maxNegDiv + 100;
+    vertexes[j].y += maxNegDiv + 100;
+  }
+  maxDiv += maxNegDiv + 100;
+
+  for(int j = 0; j < vertexes.size(); j++)
+  {
+    vertexes[j].x = vertexes[j].x  * idealSize / (maxDiv*1.05);
+    vertexes[j].y = vertexes[j].y  * idealSize / (maxDiv*1.05);
   }
 }
