@@ -78,9 +78,10 @@ void GraphVisualizer::drawEdges(std::ofstream& bmpFile)
 }
 
 void GraphVisualizer::drawVertices(std::ofstream& bmpFile) {
-  for (const Vertex& vertex : vertices) {
+  for (int i = 0; i < vertices.size(); i++) {
     unsigned char colors[3] = {255,0,0};
-    drawCircle(bmpFile, static_cast<int>(vertex.x), static_cast<int>(vertex.y), 10, colors);
+    drawCircle(bmpFile, static_cast<int>(vertices[i].x), static_cast<int>(vertices[i].y), 10, colors);
+    writeText(bmpFile, static_cast<int>(vertices[i].x), static_cast<int>(vertices[i].y), i);
   }
 }
 
@@ -120,17 +121,48 @@ void GraphVisualizer::drawCircle(std::ofstream& bmpFile, int cx, int cy, int rad
 {
   for (int x = cx - radius; x <= cx + radius; ++x) {
     for (int y = cy - radius; y <= cy + radius; ++y) {
-      if (pow(x - cx, 2) + pow(y - cy, 2) <= pow(radius, 2)) {
+      if ((x - cx)*(x - cx) + (y - cy)*(y - cy) <= radius*radius) {
         setPixel(bmpFile, x, y, color);
       }
     }
   }
 }
 
+void GraphVisualizer::writeText(std::ofstream& bmpFile, int x, int y, int id) 
+{
+  const int charWidth = 12; // Width of each character
+  const int charHeight = 16; // Height of each character
+  int digit = 0;
+  unsigned char textColor[3] = {0, 0, 0}; // Black color for text
+
+  while(id != 0) 
+  {
+    digit = id % 10;
+    for (int i = 0; i < charHeight; ++i) {
+      for (int j = 0; j < charWidth; ++j) {
+        int pixelX = x + j;
+        int pixelY = y - i; // Invert Y for text
+
+        if (pixelX >= 0 && pixelX < width && pixelY >= 0 && pixelY < height) {
+          setPixel(bmpFile, pixelX, pixelY, textColor);
+        }
+      }
+    }
+    id = id/10;
+    x += charWidth;
+  }
+}
+
+
 void GraphVisualizer::setPixel(std::ofstream& bmpFile, int x, int y, const unsigned char color[3]) 
 {
   if (x >= 0 && x < width && y >= 0 && y < height) {
-    bmpFile.seekp(54 + 3 * (width * (height - y - 1) + x));
+    int offset = 54;
+    int pixels_to_y = width * (height - y - 1);
+    int bits_to_pixel = 3 * ( pixels_to_y + x);
+    int padding = (width%4)*(height - y - 1);
+
+    bmpFile.seekp(offset + bits_to_pixel + padding);
     bmpFile.write((char *)&color, 3);
   }
 }

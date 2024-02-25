@@ -124,10 +124,10 @@ void ForceDirectedGraph::inshape()
 
   for(int j = 0; j < vertexes.size(); j++)
   {
-    vertexes[j].x += maxNegDiv + 100;
-    vertexes[j].y += maxNegDiv + 100;
+    vertexes[j].x += maxNegDiv + idealSize/100;
+    vertexes[j].y += maxNegDiv + idealSize/100;
   }
-  maxDiv += maxNegDiv + 100;
+  maxDiv += maxNegDiv + idealSize/100;
 
   for(int j = 0; j < vertexes.size(); j++)
   {

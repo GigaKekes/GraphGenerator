@@ -38,10 +38,10 @@ int main(int argc, char* argv[])
   int idealSize = 2000;
 
   ForceDirectedGraph graph(edges, numVertexes, idealSize);
-  graph.fruchtermanReingold(1000);
+  graph.fruchtermanReingold(3000);
   graph.printLayout();
 
-  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, idealSize, idealSize);
+  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, 1003, idealSize);
   graphVisualizer.visualize("Graph_Visualization.bmp");
   return 0;
 }
