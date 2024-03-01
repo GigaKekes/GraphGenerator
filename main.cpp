@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
   graph.fruchtermanReingold(3000);
   graph.printLayout();
 
-  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, 1003, idealSize);
+  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, idealSize, idealSize);
   graphVisualizer.visualize("Graph_Visualization.bmp");
   return 0;
 }
