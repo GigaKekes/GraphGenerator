@@ -134,13 +134,22 @@ void GraphVisualizer::drawCircle(std::ofstream& bmpFile, int cx, int cy, int rad
 void GraphVisualizer::writeText(std::ofstream& bmpFile, int x, int y, int id, const unsigned char color[3]) {
   // Calculate number of digits
   std::vector<int> digits = {};
-  while (id > 0) {
-    digits.push_back(id % 10);
-    id /= 10;
+  if(id == 0)
+  {
+    digits.push_back(0);
   }
+  else 
+  {
+    while (id > 0) 
+    {
+      digits.push_back(id % 10);
+      id /= 10;
+    }   
+  }
+
   std::reverse(digits.begin(), digits.end()); 
-  
-  int charWidth = 12;
+
+  int charWidth = 3;
   int charSpacing = 5;
   // Write digits sequentially
   for (int i = 0; i < digits.size(); i++) {
@@ -151,8 +160,6 @@ void GraphVisualizer::writeText(std::ofstream& bmpFile, int x, int y, int id, co
 
 // Function to draw a single digit
 void GraphVisualizer::drawDigit(std::ofstream& bmpFile, int x, int y, int digit, const unsigned char color[3]) {
-  const int charWidth = 12; // Width of each character
-  const int charHeight = 16; // Height of each character
   std::vector<std::vector<std::vector<bool>>> nums = {
     { // 0
       {1, 1, 1},
