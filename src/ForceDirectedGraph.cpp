@@ -7,14 +7,9 @@
 
 #include <dataStructures.h>
 
-ForceDirectedGraph::ForceDirectedGraph(std::vector<Edge> edges, int numOfVertexes, int idealSize) 
-{
-  k = sqrt((double)(idealSize*idealSize) / numOfVertexes);
-  temperature = 10.0 * sqrt(vertexes.size());
-  this->idealSize = idealSize;
-  this->numOfVertexes = numOfVertexes;
-  this->edges = edges;
-
+ForceDirectedGraph::ForceDirectedGraph(std::vector<Edge> edges, int numOfVertexes, int idealSize) :
+  k(sqrt((double)(idealSize*idealSize) / numOfVertexes)), temperature (10.0 * sqrt(vertexes.size())), idealSize(idealSize), numOfVertexes(numOfVertexes), edges(edges)
+  {
   srand(time(NULL));
   for (int i = 0; i < numOfVertexes; ++i) 
   {
@@ -86,12 +81,7 @@ void ForceDirectedGraph::fruchtermanReingold(int iterations)
 
     // Cooling down
     temperature = std::max(1.5, temperature*kCooling);
-    if(i < 2)
-    {
-      std::cout << i;
-    printLayout();    
-    }
-  }
+   }
   inshape();
 
 }

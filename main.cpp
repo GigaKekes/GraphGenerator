@@ -1,47 +1,33 @@
 #include <iostream>
 #include <fstream>
+#include <istream>
 #include <vector>
-#include <cmath>
-#include <cstdlib>
 #include <string>
+#include <algorithm>
 
 #include <dataStructures.h>
 #include <ForceDirectedGraph.h>
 #include <GraphVisualizer.h>
+#include <FileReader.h>
 
 using namespace std;
 
 
 int main(int argc, char* argv[]) 
 {
-  ifstream inputFile(argv[1]);
 
-  if (!inputFile.is_open())
-  {
-    cerr << "Error opening input file." << endl;   
-    return 1;
-  }
+  FileReader filereada;
 
-  int numVertexes, numEdges;
-  inputFile >> numVertexes >> numEdges;
+  ForceDirectedGraphConfig fdaConfig = filereada.GetForceDirectedConfig();
+  BMPConfig bmpConfig = filereada.GetBMPConfig();
+  vector<Edge> edges = filereada.GetEdgesFromInputFile(argv[1]); 
+  int numVertexes = filereada.GetNumVertexes();
 
-  vector<Edge> edges;
-  for (int i = 0; i < numEdges; ++i) 
-  {
-    Edge edge;
-    inputFile >> edge.u >> edge.v;
-    edges.push_back(edge);
-  }
-  inputFile.close();
-  
-
-  int idealSize = 2000;
-
-  ForceDirectedGraph graph(edges, numVertexes, idealSize);
-  graph.fruchtermanReingold(3000);
+  ForceDirectedGraph graph(edges, numVertexes, std::min(bmpConfig.width, bmpConfig.height));
+  graph.fruchtermanReingold(fdaConfig.iterations);
   graph.printLayout();
 
-  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, idealSize, idealSize);
+  GraphVisualizer graphVisualizer(graph.getVertexes(), edges, bmpConfig.width, bmpConfig.height);
   graphVisualizer.visualize("Graph_Visualization.bmp");
   return 0;
 }

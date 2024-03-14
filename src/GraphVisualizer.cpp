@@ -9,11 +9,11 @@ void GraphVisualizer::visualize(const std::string& filename)
 {
   std::ofstream bmpFile(filename, std::ios::binary);
 
-  if (!bmpFile.is_open()) {
+  if (!bmpFile.is_open()) 
+  {
     std::cerr << "Error opening file: " << filename << std::endl;
     return;
   }
-
   // BMP header
   writeBMPHeader(bmpFile);
 
@@ -25,7 +25,8 @@ void GraphVisualizer::visualize(const std::string& filename)
 }
 
 
-void GraphVisualizer::writeBMPHeader(std::ofstream& bmpFile) {
+void GraphVisualizer::writeBMPHeader(std::ofstream& bmpFile) 
+{
   // BMP File Header
   const char* header = "BM";
   bmpFile.write(header, 2);
@@ -73,14 +74,17 @@ void GraphVisualizer::writeBMPHeader(std::ofstream& bmpFile) {
 
 void GraphVisualizer::drawEdges(std::ofstream& bmpFile) 
 {
-  for (const Edge& edge : edges) {
+  for (const Edge& edge : edges) 
+  {
     unsigned char colors[3] = {255,0,0};
     drawLine(bmpFile, vertices[edge.u].x, vertices[edge.u].y, vertices[edge.v].x, vertices[edge.v].y, colors);
   }
 }
 
-void GraphVisualizer::drawVertices(std::ofstream& bmpFile) {
-  for (int i = 0; i < vertices.size(); i++) {
+void GraphVisualizer::drawVertices(std::ofstream& bmpFile) 
+{
+  for (int i = 0; i < vertices.size(); i++) 
+  {
     unsigned char colors[3] = {255,0,0};
     unsigned char textColors[3] = {0,255,0};
     drawCircle(bmpFile, static_cast<int>(vertices[i].x), static_cast<int>(vertices[i].y), 10, colors);
@@ -108,12 +112,14 @@ void GraphVisualizer::drawLine(std::ofstream& bmpFile, int x1, int y1, int x2, i
     }
 
     int e2 = 2 * err;
-    if (e2 > -dy) {
+    if (e2 > -dy) 
+    {
       err -= dy;
       x1 += sx;
     }
 
-    if (e2 < dx) {
+    if (e2 < dx) 
+    {
       err += dx;
       y1 += sy;
     }
@@ -122,9 +128,12 @@ void GraphVisualizer::drawLine(std::ofstream& bmpFile, int x1, int y1, int x2, i
 
 void GraphVisualizer::drawCircle(std::ofstream& bmpFile, int cx, int cy, int radius, const unsigned char color[3]) 
 {
-  for (int x = cx - radius; x <= cx + radius; ++x) {
-    for (int y = cy - radius; y <= cy + radius; ++y) {
-      if ((x - cx)*(x - cx) + (y - cy)*(y - cy) <= radius*radius) {
+  for (int x = cx - radius; x <= cx + radius; ++x) 
+  {
+    for (int y = cy - radius; y <= cy + radius; ++y) 
+    {
+      if ((x - cx)*(x - cx) + (y - cy)*(y - cy) <= radius*radius) 
+      {
         setPixel(bmpFile, x, y, color);
       }
     }
@@ -139,7 +148,7 @@ void GraphVisualizer::writeText(std::ofstream& bmpFile, int x, int y, int id, co
     digits.push_back(0);
   }
   else 
-  {
+{
     while (id > 0) 
     {
       digits.push_back(id % 10);
@@ -151,16 +160,22 @@ void GraphVisualizer::writeText(std::ofstream& bmpFile, int x, int y, int id, co
 
   int charWidth = 3;
   int charSpacing = 5;
+  int charHeight = 5;
   // Write digits sequentially
-  for (int i = 0; i < digits.size(); i++) {
+  for (int i = 0; i < digits.size(); i++) 
+  {
     // Draw the current digit
-    drawDigit(bmpFile, x + i * (charWidth + charSpacing), y, digits[i], color);
+    int symbolVolumeX = charWidth + charSpacing;
+    int symbolVolumeY = charHeight;
+    drawDigit(bmpFile, x + i * symbolVolumeX - symbolVolumeX * digits.size() / 2, y - symbolVolumeY / 2, digits[i], color);
   }
 }
 
 // Function to draw a single digit
-void GraphVisualizer::drawDigit(std::ofstream& bmpFile, int x, int y, int digit, const unsigned char color[3]) {
-  std::vector<std::vector<std::vector<bool>>> nums = {
+void GraphVisualizer::drawDigit(std::ofstream& bmpFile, int x, int y, int digit, const unsigned char color[3]) 
+{
+  std::vector<std::vector<std::vector<bool>>> nums = 
+    {
     { // 0
       {1, 1, 1},
       {1, 0, 1},
@@ -233,8 +248,12 @@ void GraphVisualizer::drawDigit(std::ofstream& bmpFile, int x, int y, int digit,
     }
   };
 
-  for (int i = 0; i < nums[digit].size(); i++) {
-    for (int j = 0; j < nums[digit][i].size(); j++){
+
+
+   for (int i = 0; i < nums[digit].size(); i++) 
+  {
+    for (int j = 0; j < nums[digit][i].size(); j++)
+    {
       if (nums[digit][4-i][j])
         setPixel(bmpFile, x + j, y + i, color);
     }
