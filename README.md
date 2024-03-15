@@ -41,3 +41,17 @@ To use this program run this comand
 ```
 ./GraphGenerator <Path/To/Your/File.txt>
 ```
+## Config file structure
+| Name | Data Type | Recommended Value | Effect on Program |
+|---|---|---|---|
+| fruchtermanReingoldIterations | Integer | 3000 | Controls the number of iterations for the Fruchterman-Reingold layout algorithm. Higher values may improve layout balance but increase computation time. |
+| offset | Integer | 54 | Specifies the byte offset within the BMP image file where pixel data starts. Modifying this value might cause the image to be unreadable. |
+| width | Integer | 2000 | Sets the width of the output BMP image in pixels. |
+| height | Integer | 2000 | Sets the height of the output BMP image in pixels. width and height may also affect edges length and readability of visualisation. |
+
+## License
+
+This project is licensed under the MIT License. Feel free to modify, distribute, and use the code for personal and educational purposes.
+
+## Contact
+If you have any questions, suggestions, or feedback, please feel free to contact me st119023@student.spbu.ru
