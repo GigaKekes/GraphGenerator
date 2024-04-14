@@ -41,6 +41,14 @@ To use this program run this comand
 ```
 ./GraphGenerator <Path/To/Your/File.txt>
 ```
+### Input data
+The input file should have the following structure 
+
+V E - the first line specifies the number of vertices and edges 
+
+u v - the next E lines specify the edges as pairs of vertex numbers
+
+
 ## Config file structure
 | Name | Data Type | Recommended Value | Effect on Program |
 |---|---|---|---|
